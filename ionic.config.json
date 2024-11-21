@@ -1,0 +1,7 @@
+{
+  "name": "horarioUniversitario",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/schedule"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gestión de Tareas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Nueva Tarea/Recordatorio</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Materia *</ion-label>
+        <ion-select [(ngModel)]="newTask.subject" required>
+          <ion-select-option *ngFor="let subject of subjects" [value]="subject.name">
+            {{subject.name}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Tipo *</ion-label>
+        <ion-select [(ngModel)]="newTask.type" required>
+          <ion-select-option value="task">Tarea</ion-select-option>
+          <ion-select-option value="reminder">Recordatorio</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Título *</ion-label>
+        <ion-input [(ngModel)]="newTask.title" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Descripción</ion-label>
+        <ion-textarea [(ngModel)]="newTask.description" rows="3"></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Fecha de entrega *</ion-label>
+        <ion-datetime
+          [(ngModel)]="newTask.dueDate"
+          [min]="currentDate"
+          [max]="'2025-12-31'"
+          locale="es-ES"
+          firstDayOfWeek="1"
+          [showDefaultButtons]="true"
+          cancelText="Cancelar"
+          doneText="Aceptar"
+          presentation="date"
+        >
+        </ion-datetime>
+      </ion-item>
+
+      <ion-button expand="block" (click)="addTask()" class="ion-margin-top">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Agregar
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Lista de tareas -->
+  <ion-list>
+    <ion-item-sliding *ngFor="let task of tasks">
+      <ion-item>
+        <ion-label>
+          <h2>{{task.title}}</h2>
+          <p><strong>Materia:</strong> {{task.subject}}</p>
+          <p *ngIf="task.description">{{task.description}}</p>
+          <p><strong>Fecha de entrega:</strong> {{formatDate(task.dueDate)}}</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="task.type === 'task' ? 'primary' : 'warning'">
+          {{task.type === 'task' ? 'Tarea' : 'Recordatorio'}}
+        </ion-badge>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="danger" (click)="deleteTask(task)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <ion-item *ngIf="tasks.length === 0">
+      <ion-label color="medium" class="ion-text-center">
+        No hay tareas o recordatorios
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,125 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Horario de Clases</ion-title>
+    <!-- Agregamos el botón de Management -->
+    <ion-buttons slot="end">
+      <ion-button routerLink="/management">
+        <ion-icon slot="start" name="clipboard"></ion-icon>
+        Gestión
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedSegment">
+      <ion-segment-button value="list">
+        <ion-label>Lista</ion-label>
+        <ion-icon name="list"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button value="schedule">
+        <ion-label>Horario</ion-label>
+        <ion-icon name="calendar"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Vista de Lista -->
+  <div *ngIf="selectedSegment === 'list'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Agregar Nueva Materia</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Nombre de la Materia *</ion-label>
+          <ion-input [(ngModel)]="newSubject.name" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Profesor</ion-label>
+          <ion-input [(ngModel)]="newSubject.professor"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Aula</ion-label>
+          <ion-input [(ngModel)]="newSubject.classroom"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Día *</ion-label>
+          <ion-select [(ngModel)]="newSubject.day" required>
+            <ion-select-option *ngFor="let day of days" [value]="day">
+              {{day}}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Hora Inicio *</ion-label>
+          <ion-input type="time" [(ngModel)]="newSubject.startTime" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Hora Fin *</ion-label>
+          <ion-input type="time" [(ngModel)]="newSubject.endTime" required></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" (click)="addSubject()" class="ion-margin-top">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Agregar Materia
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list>
+      <ion-item *ngFor="let subject of subjects" [color]="subject.color">
+        <ion-label>
+          <h2>{{subject.name}}</h2>
+          <p>Profesor: {{subject.professor}}</p>
+          <p>Aula: {{subject.classroom}}</p>
+          <p>{{subject.day}} - {{subject.startTime}} a {{subject.endTime}}</p>
+        </ion-label>
+        <!-- Botón para eliminar -->
+        <ion-button color="danger" fill="clear" slot="end" (click)="deleteSubject(subject)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Vista de Horario -->
+  <div *ngIf="selectedSegment === 'schedule'" class="schedule-view">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" *ngFor="let day of days">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>{{day}}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-list>
+                <ion-item *ngFor="let subject of getSubjectsForDay(day)" [color]="subject.color">
+                  <ion-label>
+                    <h2>{{subject.name}}</h2>
+                    <p>{{subject.startTime}} - {{subject.endTime}}</p>
+                    <p>Aula: {{subject.classroom}}</p>
+                  </ion-label>
+                </ion-item>
+                <ion-item *ngIf="getSubjectsForDay(day).length === 0">
+                  <ion-label color="medium">
+                    No hay materias programadas
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>
